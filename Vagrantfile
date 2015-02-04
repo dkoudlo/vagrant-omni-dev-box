@@ -42,27 +42,17 @@ Vagrant.configure(2) do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.post_up_message = "\n\n\n\n\n\n\n" + 
-                              "This Box has these installed:\napache2\ngit\nNode.js +" + 
+                              "This Box has these installed:"+
+                              "\napache2" +
+                              "\ngit" +
+                              "\nNode.js +" + 
                               " npm\nJava 7 with JAVA_HOME and PATH set\n"
 
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-    # Display the VirtualBox GUI when booting the machine
-    # vb.gui = true
-  
-    # Customize the amount of memory on the VM:
-    # vb.memory = "1024"
-  # end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
+ 
 
-  # Use vagrant-omnibus to install chef client
+  # Use vagrant-omnibus plugin to install latest chef client
   config.omnibus.chef_version = :latest
-  
+
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
     # sudo apt-get install -y apache2
@@ -74,7 +64,7 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y nodejs
 
     sudo knife cookbook site download java
-    sudo mkdir /vagrant/cookbooks
+    sudo mkdir -p /vagrant/cookbooks
     sudo tar xvzf java-*.tar.gz -C /vagrant/cookbooks
 
     # if ! [ -L /var/www ]; then
@@ -91,6 +81,7 @@ Vagrant.configure(2) do |config|
 
     chef.cookbooks_path = ["cookbooks"]
 
+    java_version = 7
     chef.json = { 
                   :java => { 
                     :install_flavor => "oracle",
@@ -98,13 +89,36 @@ Vagrant.configure(2) do |config|
                     :set_etc_environment => true,
                     :oracle => {
                       :accept_oracle_download_terms => true
+                    },
+                    :jdk => {
+                      :java_version =>  {
+                        :x86_64 => {
+                          :url => "http://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-linux-x64.tar.gz",
+                          :checksum => "6f1f81030a34f7a9c987f8b68a24d139"
+                        }
+                      }
                     }
-                  } 
+                  }
                 }
 
     chef.add_recipe "java"
 
   end
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+    # Display the VirtualBox GUI when booting the machine
+    # vb.gui = true
+  
+    # Customize the amount of memory on the VM:
+    # vb.memory = "1024"
+  # end
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
