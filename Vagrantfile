@@ -43,8 +43,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.post_up_message = "\n\n\n\n\n\n\n" + 
                               "This Box has these installed:"+
-                              "\napache2" +
-                              "\ngit" +
+                             # "\napache2" +
+                             # "\ngit" +
                               "\nNode.js +" + 
                               " npm\nJava 7 with JAVA_HOME and PATH set\n"
 
@@ -64,6 +64,7 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y nodejs
 
     sudo knife cookbook site download java
+    # -p create if does not exist
     sudo mkdir -p /vagrant/cookbooks
     sudo tar xvzf java-*.tar.gz -C /vagrant/cookbooks
 
@@ -71,14 +72,12 @@ Vagrant.configure(2) do |config|
     #   rm -rf /var/www
     #   ln -fs /vagrant /var/www
     # fi
-
-    # update locate db
-    sudo updatedb
   SHELL
 
 
   config.vm.provision "chef_solo" do |chef|
 
+    # the knife command shell scrip-t should create
     chef.cookbooks_path = ["cookbooks"]
 
     java_version = 7
@@ -104,6 +103,13 @@ Vagrant.configure(2) do |config|
     chef.add_recipe "java"
 
   end
+
+  # finalalise scripts
+  config.vm.provision "shell", inline: <<-SHELL
+
+    # update locate db
+    sudo updatedb
+  SHELL
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
