@@ -45,8 +45,8 @@ Vagrant.configure(2) do |config|
                               "This Box has these installed:"+
                               "\napache2" +
                               "\ngit" +
-                              "\nNode.js +" + 
-                              " npm\nJava 7 with JAVA_HOME and PATH set\n"
+                              "\nNode.js + npm" + 
+                              "\nJava 7 with JAVA_HOME and PATH set\n"
 
  
 
@@ -79,8 +79,8 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision "chef_solo" do |chef|
 
-    chef.cookbooks_path = ["cookbooks"]
-
+    # chef.cookbooks_path = ["cookbooks"]
+    chef.add_recipe "java"
     java_version = 7
     chef.json = { 
                   :java => { 
@@ -100,9 +100,6 @@ Vagrant.configure(2) do |config|
                     }
                   }
                 }
-
-    chef.add_recipe "java"
-
   end
 
   # Provider-specific configuration so you can fine-tune various
