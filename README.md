@@ -1,5 +1,4 @@
-# vagrant-omni-dev-box
-Vagrant Box for Web Development
+# Vagrant Box for Web Development
 
 ## Install 
 Download Install Vagrant + VirtualBox
@@ -7,18 +6,22 @@ Download Install Vagrant + VirtualBox
 -Docker in future-
 
 After Install Open Terminal and run
-
+```
 vagrant box add ubuntu/trusty64
 
 vagrant plugin install vagrant-omnibus
 
 vagrant up # the only thing to do (need to check if still adding the box is necessary on very initial setup)
-
-# Now ssh into the machine
+```
+Now ssh into the machine
+```
 vagrant ssh
+```
+if you are getting ssh -command not found make sure openssh installed in cygwin (aka run 'ssh' in terminal from which 
+vagrant command is ran)
 
-# if you are getting ssh -command not found make sure openssh installed in cygwin (aka run 'ssh' in terminal from which vagrant command is ran)
 
+Shared Directory /vagrant -> mapped to the directory you are in workspace workspace/galaxy-swager
 
 # Shared Directory 
 ```/vagrant``` -> mapped to the directory you are in workspace workspace/galaxy-swager
