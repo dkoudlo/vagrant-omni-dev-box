@@ -42,8 +42,75 @@ Vagrant.configure(2) do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.post_up_message = "\n\n\n\n\n\n\n" + 
-                              "This Box has these installed:\napache2\ngit\nNode.js +" + 
+                              "This Box has these installed:"+
+                             # "\napache2" +
+                             # "\ngit" +
+                              "\nNode.js +" + 
                               " npm\nJava 7 with JAVA_HOME and PATH set\n"
+
+ 
+
+  # Use vagrant-omnibus plugin to install latest chef client
+  config.omnibus.chef_version = :latest
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo apt-get update
+    # sudo apt-get install -y apache2
+    # sudo apt-get install -y git
+    sudo apt-get install -y locate
+
+    # install node js and npm
+    curl -sL https://deb.nodesource.com/setup | sudo bash -
+    sudo apt-get install -y nodejs
+
+    sudo knife cookbook site download java
+    # -p create if does not exist
+    sudo mkdir -p /vagrant/cookbooks
+    sudo tar xvzf java-*.tar.gz -C /vagrant/cookbooks
+
+    # if ! [ -L /var/www ]; then
+    #   rm -rf /var/www
+    #   ln -fs /vagrant /var/www
+    # fi
+  SHELL
+
+
+  config.vm.provision "chef_solo" do |chef|
+
+    # the knife command shell scrip-t should create
+    chef.cookbooks_path = ["cookbooks"]
+
+    java_version = 7
+    chef.json = { 
+                  :java => { 
+                    :install_flavor => "oracle",
+                    :jdk_version => "7",
+                    :set_etc_environment => true,
+                    :oracle => {
+                      :accept_oracle_download_terms => true
+                    },
+                    :jdk => {
+                      # java_version 7
+                      :java_version =>  {
+                        :x86_64 => {
+                          :url => "http://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-linux-x64.tar.gz",
+                          :checksum => "6f1f81030a34f7a9c987f8b68a24d139"
+                        }
+                      }
+                    }
+                  }
+                }
+
+    chef.add_recipe "java"
+
+  end
+
+  # finalalise scripts
+  config.vm.provision "shell", inline: <<-SHELL
+
+    # update locate db
+    sudo updatedb
+  SHELL
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -59,52 +126,6 @@ Vagrant.configure(2) do |config|
   #
   # View the documentation for the provider you are using for more
   # information on available options.
-
-  # Use vagrant-omnibus to install chef client
-  config.omnibus.chef_version = :latest
-  
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    # sudo apt-get install -y apache2
-    # sudo apt-get install -y git
-    sudo apt-get install -y locate
-
-    # install node js and npm
-    curl -sL https://deb.nodesource.com/setup | sudo bash -
-    sudo apt-get install -y nodejs
-
-    sudo knife cookbook site download java
-    sudo mkdir /vagrant/cookbooks
-    sudo tar xvzf java-*.tar.gz -C /vagrant/cookbooks
-
-    # if ! [ -L /var/www ]; then
-    #   rm -rf /var/www
-    #   ln -fs /vagrant /var/www
-    # fi
-
-    # update locate db
-    sudo updatedb
-  SHELL
-
-
-  config.vm.provision "chef_solo" do |chef|
-
-    chef.cookbooks_path = ["cookbooks"]
-
-    chef.json = { 
-                  :java => { 
-                    :install_flavor => "oracle",
-                    :jdk_version => "7",
-                    :set_etc_environment => true,
-                    :oracle => {
-                      :accept_oracle_download_terms => true
-                    }
-                  } 
-                }
-
-    chef.add_recipe "java"
-
-  end
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
