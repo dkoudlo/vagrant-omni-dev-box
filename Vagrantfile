@@ -90,6 +90,7 @@ Vagrant.configure(2) do |config|
                       :accept_oracle_download_terms => true
                     },
                     :jdk => {
+                      # java_version 7
                       :java_version =>  {
                         :x86_64 => {
                           :url => "http://download.oracle.com/otn-pub/java/jdk/7u75-b13/jdk-7u75-linux-x64.tar.gz",

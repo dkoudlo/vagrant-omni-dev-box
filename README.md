@@ -1,10 +1,10 @@
 # vagrant-omni-dev-box
 Vagrant Box for Web Development
 
-h3. Install 
+## Install 
 Download Install Vagrant + VirtualBox
 
-+ Docker
+-Docker in future-
 
 After Install Open Terminal and run
 
@@ -20,19 +20,17 @@ vagrant ssh
 # if you are getting ssh -command not found make sure openssh installed in cygwin (aka run 'ssh' in terminal from which vagrant command is ran)
 
 
-# Shared Directory /vagrant -> mapped to the directory you are in workspace workspace/galaxy-swager
+# Shared Directory 
+```/vagrant``` -> mapped to the directory you are in workspace workspace/galaxy-swager
 
-# Stopping vm
-vagrant suspend # run freeze/pause vagrant
-vagrant halt # gracefull shutdown of vm
-vagrant detroy # will remove all tracec
-
--------------------------------------
-
-
+## Stopping vm
+```vagrant suspend``` # run freeze/pause vagrant
+```vagrant halt``` # gracefull shutdown of vm
+```vagrant detroy``` # will remove all tracec
 
 # PROVISIONING
-# if running and updated provision
-vagrant reload --provision
+if running and updated provision
+```vagrant reload --provision```
 or
-vagrant up # will just run the script
+```vagrant destroy``` # detroy the vm
+```vagrant up``` # reprovision everything from clean vm
